@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#35145f" />
     <meta name="description" content="Liberty Hill ISD School &amp; Boundary Locator for 2026–27 attendance zones and campus information." />
-    <meta name="application-version" content="1.02" />
+    <meta name="application-version" content="1.03" />
     <title>LHISD School &amp; Boundary Locator</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23582c83'/%3E%3Cpath d='M32 8l6.2 13 14.3 2-10.4 10.1 2.5 14.2L32 40.6 19.4 47.3l2.5-14.2L11.5 23l14.3-2z' fill='%23ffb81c'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
     
     <style>
 /* required styles */
@@ -1009,26 +1010,6 @@ textarea { padding: .75rem; resize: vertical; }
 }
 
 .leaflet-overlay-pane path { transition: fill-opacity .28s ease, stroke-opacity .28s ease, opacity .28s ease; }
-.boundary-label {
-  padding: 0;
-  color: #2d163f;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  font-size: .72rem;
-  font-weight: 900;
-  letter-spacing: .035em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-shadow:
-    -1px -1px 0 rgba(255,255,255,.96),
-     1px -1px 0 rgba(255,255,255,.96),
-    -1px  1px 0 rgba(255,255,255,.96),
-     1px  1px 0 rgba(255,255,255,.96),
-     0 2px 5px rgba(255,255,255,.9);
-  pointer-events: none;
-}
 .school-marker { background: transparent; border: 0; }
 .school-marker .marker-body {
   display: grid;
@@ -1339,7 +1320,6 @@ fieldset input { accent-color: var(--purple-700); width: 17px; height: 17px; }
             <fieldset>
               <legend>Display</legend>
               <label><input type="checkbox" id="campusMarkerToggle" checked /> Campus markers</label>
-              <label><input type="checkbox" id="labelToggle" checked /> Boundary labels</label>
               <div class="basemap-choice" role="group" aria-label="Basemap">
                 <span class="basemap-choice-label">Basemap</span>
                 <label><input type="radio" name="basemap" value="road" checked /> Map</label>
@@ -1421,7 +1401,6 @@ const state = {
   data: {},
   activeBoundary: "elementary",
   activeLevel: "all",
-  showLabels: true,
   satellite: false,
   checkLocationMode: false,
   noteMode: false,
@@ -1447,7 +1426,6 @@ const els = {
   layersPanel: document.getElementById("layersPanel"),
   layersClose: document.getElementById("layersClose"),
   campusMarkerToggle: document.getElementById("campusMarkerToggle"),
-  labelToggle: document.getElementById("labelToggle"),
   basemapRadios: Array.from(document.querySelectorAll('input[name="basemap"]')),
   basemapBadge: document.getElementById("basemapBadge"),
   basemapBadgeText: document.getElementById("basemapBadgeText"),
@@ -1525,7 +1503,6 @@ const boundaryLayer = L.geoJSON(null, {
     layer.on("click", event => showBoundaryPopup(feature, layer, event.latlng));
   }
 }).addTo(map);
-const labelLayer = L.layerGroup().addTo(map);
 const markerLayer = L.layerGroup().addTo(map);
 const notesLayer = L.layerGroup().addTo(map);
 let searchMarker = null;
@@ -1701,27 +1678,12 @@ function zoneDisplayName(name) {
 
 function drawBoundaries() {
   boundaryLayer.clearLayers();
-  labelLayer.clearLayers();
   const datasets = state.activeBoundary === "high"
     ? [state.data.high, state.data.high12].filter(Boolean)
     : [state.data[state.activeBoundary]].filter(Boolean);
   if (!datasets.length) return;
 
   datasets.forEach(data => boundaryLayer.addData(data));
-  if (state.showLabels) {
-    const seen = new Set();
-    datasets.flatMap(data => data.features).forEach(feature => {
-      const name = zoneDisplayName(feature.properties.name || "Zone");
-      const key = `${name}:${Math.round(L.geoJSON(feature).getBounds().getCenter().lat * 1000)}:${Math.round(L.geoJSON(feature).getBounds().getCenter().lng * 1000)}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      const center = L.geoJSON(feature).getBounds().getCenter();
-      L.marker(center, {
-        interactive: false,
-        icon: L.divIcon({ className: "", html: `<div class="boundary-label">${escapeHtml(name)}</div>`, iconSize: null })
-      }).addTo(labelLayer);
-    });
-  }
 }
 
 function boundaryStyle(feature) {
@@ -2170,7 +2132,6 @@ document.querySelectorAll(".level-tab").forEach(button => button.addEventListene
 document.querySelectorAll('input[name="boundaryLevel"]').forEach(radio => radio.addEventListener("change", () => {
   setBoundaryLevel(radio.value);
 }));
-els.labelToggle.addEventListener("change", () => { state.showLabels = els.labelToggle.checked; drawBoundaries(); });
 els.basemapRadios.forEach(radio => radio.addEventListener("change", () => {
   if (radio.checked) setBasemap(radio.value);
 }));

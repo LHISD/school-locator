@@ -1457,7 +1457,6 @@ fieldset { padding: .9rem 1rem .95rem; }
               </button>
             </div>
 
-            <div class="status" id="searchStatus" role="status" aria-live="polite"></div>
             <div class="assignment-results" id="assignmentResults" hidden></div>
           </section>
 
@@ -1607,7 +1606,6 @@ const els = {
   locationButton: document.getElementById("locationButton"),
   addressForm: document.getElementById("addressForm"),
   addressSearch: document.getElementById("addressSearch"),
-  searchStatus: document.getElementById("searchStatus"),
   assignmentResults: document.getElementById("assignmentResults"),
   campusSearch: document.getElementById("campusSearch"),
   campusList: document.getElementById("campusList"),
@@ -2127,8 +2125,8 @@ function darken(hex) {
 }
 
 function setStatus(message, isError = false) {
-  els.searchStatus.textContent = message;
-  els.searchStatus.classList.toggle("error", isError);
+  // Status box intentionally removed from the Find Your School panel.
+  // Search outcomes are communicated through the assignment results/map UI.
 }
 
 function toggleSidebar(force) {
@@ -2507,7 +2505,7 @@ document.addEventListener("keydown", event => {
 </script>
   
 <script>
-/* v1.05 defensive cleanup for legacy/cached markup variants. */
+/* Address input normalization. */
 (function () {
   function cleanAddressUI() {
     var input = document.getElementById('addressSearch');
@@ -2520,11 +2518,6 @@ document.addEventListener("keydown", event => {
           if (label.htmlFor === 'addressSearch' || /enter an address/i.test(label.textContent || '')) label.remove();
         });
       }
-    }
-    var status = document.getElementById('searchStatus');
-    if (status && /enter an address,? use your location,? or select a point on the map\.?/i.test((status.textContent || '').trim())) {
-      status.textContent = '';
-      status.classList.remove('error');
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cleanAddressUI);

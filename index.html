@@ -779,7 +779,6 @@ h2 { margin-bottom: .3rem; font-size: 1.1rem; line-height: 1.25; color: var(--pu
 .address-form { margin-top: .8rem; }
 .address-privacy-note { margin: .45rem 0 0; color: var(--muted); font-size: .7rem; line-height: 1.35; }
 
-.address-form label { display: block; margin-bottom: .4rem; font-size: .84rem; font-weight: 800; color: var(--purple-950); }
 .search-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem; }
 input[type="search"], textarea {
   width: 100%;
@@ -803,8 +802,8 @@ textarea { padding: .75rem; resize: vertical; }
 .danger-button { color: #8f2026; background: #fff; border: 1px solid #d5a0a4; }
 .text-button { margin-top: .7rem; padding: 0; color: var(--purple-700); background: none; border: 0; font-size: .9rem; font-weight: 750; text-decoration: underline; text-underline-offset: 3px; }
 .status { margin-top: .7rem; padding: .62rem .7rem; color: #5c5662; background: rgba(242,240,245,.9); border: 1px solid rgba(53,20,95,.04); border-radius: 12px; font-size: .79rem; line-height: 1.38; }
-.status.error { color: #a3212a; }
 .status:empty { display: none; }
+.status.error { color: #a3212a; }
 
 
 .assignment-results { margin-top: .9rem; padding: .9rem; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; }
@@ -1352,9 +1351,6 @@ fieldset { padding: .9rem 1rem .95rem; }
     margin-top: .65rem;
   }
 
-  .address-form label {
-    margin-bottom: .3rem;
-  }
 
   .address-privacy-note {
     margin-top: .3rem;
@@ -1442,9 +1438,8 @@ fieldset { padding: .9rem 1rem .95rem; }
             </div>
 
             <form class="address-form" id="addressForm">
-              <label for="addressSearch">Enter an address</label>
               <div class="search-row">
-                <input id="addressSearch" type="search" autocomplete="street-address" placeholder="Street address, Liberty Hill, TX" />
+                <input id="addressSearch" type="search" autocomplete="street-address" aria-label="Enter an address" placeholder="Enter an address" />
                 <button class="primary-button" id="addressSearchButton" type="submit">Search</button>
               </div>
               <p class="address-privacy-note">Address lookup uses the U.S. Census Bureau Geocoder. Searches are used only to locate the entered address on this map.</p>
@@ -1716,7 +1711,6 @@ async function init() {
     drawNotes();
     renderCampusList();
     applyUrlState();
-    setStatus("Enter an address, use your location, or select a point on the map.");
   } catch (error) {
     console.error(error);
     setStatus("Map data could not be loaded. Start this project through a local web server rather than opening the HTML file directly.", true);

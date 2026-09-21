@@ -1407,6 +1407,12 @@ fieldset { padding: .9rem 1rem .95rem; }
   }
 }
 
+
+/* v1.05: keep address search compact and remove redundant instructional UI */
+.address-form label[for="addressSearch"],
+.address-form .address-label { display: none !important; }
+#searchStatus:empty { display: none !important; }
+
 </style>
   </head>
   <body>
@@ -2499,5 +2505,32 @@ document.addEventListener("keydown", event => {
 });
 
 </script>
-  </body>
+  
+<script>
+/* v1.05 defensive cleanup for legacy/cached markup variants. */
+(function () {
+  function cleanAddressUI() {
+    var input = document.getElementById('addressSearch');
+    if (input) {
+      input.setAttribute('placeholder', 'Enter an address');
+      input.setAttribute('aria-label', 'Enter an address');
+      var form = input.closest('form');
+      if (form) {
+        form.querySelectorAll('label').forEach(function (label) {
+          if (label.htmlFor === 'addressSearch' || /enter an address/i.test(label.textContent || '')) label.remove();
+        });
+      }
+    }
+    var status = document.getElementById('searchStatus');
+    if (status && /enter an address,? use your location,? or select a point on the map\.?/i.test((status.textContent || '').trim())) {
+      status.textContent = '';
+      status.classList.remove('error');
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cleanAddressUI);
+  else cleanAddressUI();
+})();
+</script>
+
+</body>
 </html>

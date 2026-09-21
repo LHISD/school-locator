@@ -62,7 +62,7 @@ Released September 17, 2026
 
 > v1.08 contained a JavaScript regression that was corrected in v1.09.
 
-### v1.07
+### v1.08
 
 **Spacing and UI Refinements**
 
@@ -242,3 +242,10 @@ Before publishing a new release:
 This tool is intended to make Liberty Hill ISD attendance boundary
 information easier for families and community members to explore and
 understand.
+
+
+## v1.08
+- Removed redundant address label above the search field.
+- Removed Census geocoder helper copy.
+- Removed default address/location instructional status box.
+- Address input placeholder is now “Enter an address”.

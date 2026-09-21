@@ -1413,6 +1413,18 @@ fieldset { padding: .9rem 1rem .95rem; }
 .address-form .address-label { display: none !important; }
 #searchStatus:empty { display: none !important; }
 
+
+/* v1.07: compact address search UI */
+.address-form > label,
+.address-form label[for="addressSearch"],
+.address-privacy-note,
+.search-panel .status,
+.search-panel #searchStatus {
+  display: none !important;
+}
+.address-form { margin-top: .75rem; }
+.search-row { margin-top: 0 !important; }
+
 </style>
   </head>
   <body>
@@ -1448,7 +1460,6 @@ fieldset { padding: .9rem 1rem .95rem; }
                 <input id="addressSearch" type="search" autocomplete="street-address" aria-label="Enter an address" placeholder="Enter an address" />
                 <button class="primary-button" id="addressSearchButton" type="submit">Search</button>
               </div>
-              <p class="address-privacy-note">Address lookup uses the U.S. Census Bureau Geocoder. Searches are used only to locate the entered address on this map.</p>
             </form>
 
             <div class="location-actions" aria-label="Location tools">
@@ -2522,6 +2533,29 @@ document.addEventListener("keydown", event => {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cleanAddressUI);
   else cleanAddressUI();
+})();
+</script>
+
+
+<script>
+/* v1.07: remove legacy/redundant address helper UI if older markup is merged in deployment. */
+(function () {
+  function enforceCompactAddressUI() {
+    var input = document.getElementById('addressSearch');
+    if (!input) return;
+    input.placeholder = 'Enter an address';
+    input.setAttribute('aria-label', 'Enter an address');
+    var form = input.closest('form');
+    if (form) {
+      form.querySelectorAll('label, .address-privacy-note').forEach(function (el) { el.remove(); });
+    }
+    var panel = input.closest('.search-panel');
+    if (panel) {
+      panel.querySelectorAll('.status, #searchStatus').forEach(function (el) { el.remove(); });
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', enforceCompactAddressUI);
+  else enforceCompactAddressUI();
 })();
 </script>
 
